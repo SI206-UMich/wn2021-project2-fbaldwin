@@ -39,7 +39,16 @@ def get_search_links():
 
     """
 
-    pass
+    url = 'https://www.goodreads.com/search?q=fantasy&qid=NwUsLiA2Nc'
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    books = soup.find_all('tr', itemtype='http://schema.org/Book')
+    lst = []
+    for i in books:
+        title = i.find('a', class_='bookTitle')
+        link = title['href']
+        lst.append('https://www.goodreads.com' + link)
+    return lst
 
 
 def get_book_summary(book_url):
@@ -126,7 +135,7 @@ class TestCases(unittest.TestCase):
 
     def test_get_search_links(self):
         # check that TestCases.search_urls is a list
-
+        print(get_search_links())
         # check that the length of TestCases.search_urls is correct (10 URLs)
         pass
 
