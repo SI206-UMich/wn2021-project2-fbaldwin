@@ -18,25 +18,11 @@ def get_titles_from_search_results(filename):
     fil = open(filename)
     soup = BeautifulSoup(fil, 'html.parser')
     fil.close()
-    books = soup.find_all('a', class_='bookTitle')
-    title_lst = []
+    books = soup.find_all('tr', itemtype='http://schema.org/Book')
+    lst = []
     for i in books:
-        title = i.find('span', role='heading').text.strip()
-        title_lst.append(title)
-    authors = soup.find_all('a', class_='authorName')
-    aut_lst = []
-    for k in authors:
-        aut = k.find('span', itemprop='name').text.strip()
-        aut_lst.append(aut)
-    tup_lst = []
-    accum = 0
-    for i in title_lst:
-        tup_lst.append((title_lst[accum], aut_lst[accum]))
-        accum += 1
-
-    
-
-    pass
+        lst.append((i.find('a', class_='bookTitle').text.strip(), i.find('a', class_='authorName').text.strip()))
+    return lst
 
 
 def get_search_links():
