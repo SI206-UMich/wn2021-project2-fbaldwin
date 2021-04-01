@@ -64,8 +64,13 @@ def get_book_summary(book_url):
     You can easily capture CSS selectors with your browser's inspector window.
     Make sure to strip() any newlines from the book title and number of pages.
     """
-
-    pass
+    r = requests.get(book_url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    details = soup.find('div', class_='last col')
+    title = details.find('h1').text.strip()
+    author = details.find('a', class_='authorName').text.strip()
+    pages = details.find('span', itemprop='numberOfPages').text.strip()
+    return (title, author, pages)
 
 
 def summarize_best_books(filepath):
@@ -79,7 +84,20 @@ def summarize_best_books(filepath):
     ("Fiction", "The Testaments (The Handmaid's Tale, #2)", "https://www.goodreads.com/choiceawards/best-fiction-books-2020") 
     to your list of tuples.
     """
-    pass
+    fil = open(filepath)
+    soup = BeautifulSoup(fil, 'html.parser')
+    fil.close()
+    categories = soup.find_all('div', class_='category clearFix')
+    lst = []
+    for i in categories:
+        anc = i.find('a')
+        link = anc['href']
+        genre = i.find('h4').text.strip()
+        alt_anc = i.find('img')
+        title = alt_anc['alt']
+        lst.append((genre, title, link))
+    return lst
+
 
 
 def write_csv(data, filename):
@@ -102,7 +120,11 @@ def write_csv(data, filename):
 
     This function should not return anything.
     """
-    pass
+    with open(filename, 'w', newline='') as f:
+        write = csv.writer(f)
+        write.writerow(['Book Title', 'Author Name'])
+        for i in data:
+            write.writerow(i)
 
 
 def extra_credit(filepath):
@@ -120,7 +142,7 @@ class TestCases(unittest.TestCase):
     
 
     def test_get_titles_from_search_results(self):
-        print(get_titles_from_search_results('search_results.htm'))
+        pass
         # call get_titles_from_search_results() on search_results.htm and save to a local variable
 
         # check that the number of titles extracted is correct (20 titles)
@@ -135,7 +157,6 @@ class TestCases(unittest.TestCase):
 
     def test_get_search_links(self):
         # check that TestCases.search_urls is a list
-        print(get_search_links())
         # check that the length of TestCases.search_urls is correct (10 URLs)
         pass
 
@@ -146,7 +167,8 @@ class TestCases(unittest.TestCase):
     def test_get_book_summary(self):
         # create a local variable – summaries – a list containing the results from get_book_summary()
         # for each URL in TestCases.search_urls (should be a list of tuples)
-        pass
+        print(get_book_summary('https://www.goodreads.com/book/show/42667807-die-vol-1?from_search=true&from_srp=true&qid=NwUsLiA2Nc&rank=10'))
+        print(get_book_summary('https://www.goodreads.com/book/show/6542645-fantasy-in-death?from_search=true&from_srp=true&qid=NwUsLiA2Nc&rank=2'))
         # check that the number of book summaries is correct (10)
 
             # check that each item in the list is a tuple
@@ -162,7 +184,7 @@ class TestCases(unittest.TestCase):
 
     def test_summarize_best_books(self):
         # call summarize_best_books and save it to a variable
-        pass
+        print(summarize_best_books('best_books_2020.htm'))
         # check that we have the right number of best books (20)
 
             # assert each item in the list of best books is a tuple
@@ -176,14 +198,15 @@ class TestCases(unittest.TestCase):
 
     def test_write_csv(self):
         # call get_titles_from_search_results on search_results.htm and save the result to a variable
-
+        data = get_titles_from_search_results('search_results.htm')
         # call write csv on the variable you saved and 'test.csv'
-        pass
+        write_csv(data, 'test.csv')
         # read in the csv that you wrote (create a variable csv_lines - a list containing all the lines in the csv you just wrote to above)
-
+        fil = open('test.csv', 'r')
+        csv_lines = fil.readlines()
 
         # check that there are 21 lines in the csv
-
+        self.assertEqual(len(csv_lines), 21)
         # check that the header row is correct
 
         # check that the next row is 'Harry Potter and the Deathly Hallows (Harry Potter, #7)', 'J.K. Rowling'
