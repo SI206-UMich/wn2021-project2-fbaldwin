@@ -15,6 +15,27 @@ def get_titles_from_search_results(filename):
     [('Book title 1', 'Author 1'), ('Book title 2', 'Author 2')...]
     """
 
+    fil = open(filename)
+    soup = BeautifulSoup(fil, 'html.parser')
+    fil.close()
+    books = soup.find_all('a', class_='bookTitle')
+    title_lst = []
+    for i in books:
+        title = i.find('span', role='heading').text.strip()
+        title_lst.append(title)
+    authors = soup.find_all('a', class_='authorName')
+    aut_lst = []
+    for k in authors:
+        aut = k.find('span', itemprop='name').text.strip()
+        aut_lst.append(aut)
+    tup_lst = []
+    accum = 0
+    for i in title_lst:
+        tup_lst.append((title_lst[accum], aut_lst[accum]))
+        accum += 1
+
+    
+
     pass
 
 
@@ -101,9 +122,10 @@ def extra_credit(filepath):
 class TestCases(unittest.TestCase):
 
     # call get_search_links() and save it to a static variable: search_urls
-
+    
 
     def test_get_titles_from_search_results(self):
+        print(get_titles_from_search_results('search_results.htm'))
         # call get_titles_from_search_results() on search_results.htm and save to a local variable
 
         # check that the number of titles extracted is correct (20 titles)
@@ -120,7 +142,7 @@ class TestCases(unittest.TestCase):
         # check that TestCases.search_urls is a list
 
         # check that the length of TestCases.search_urls is correct (10 URLs)
-
+        pass
 
         # check that each URL in the TestCases.search_urls is a string
         # check that each URL contains the correct url for Goodreads.com followed by /book/show/
@@ -129,7 +151,7 @@ class TestCases(unittest.TestCase):
     def test_get_book_summary(self):
         # create a local variable – summaries – a list containing the results from get_book_summary()
         # for each URL in TestCases.search_urls (should be a list of tuples)
-
+        pass
         # check that the number of book summaries is correct (10)
 
             # check that each item in the list is a tuple
@@ -145,7 +167,7 @@ class TestCases(unittest.TestCase):
 
     def test_summarize_best_books(self):
         # call summarize_best_books and save it to a variable
-
+        pass
         # check that we have the right number of best books (20)
 
             # assert each item in the list of best books is a tuple
@@ -161,7 +183,7 @@ class TestCases(unittest.TestCase):
         # call get_titles_from_search_results on search_results.htm and save the result to a variable
 
         # call write csv on the variable you saved and 'test.csv'
-
+        pass
         # read in the csv that you wrote (create a variable csv_lines - a list containing all the lines in the csv you just wrote to above)
 
 
